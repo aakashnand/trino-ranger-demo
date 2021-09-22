@@ -1,0 +1,58 @@
+version: "3.7"
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.12.1
+    container_name: es01
+    hostname: es01
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: false
+    ports:
+      - 9200:9200
+    networks:
+      - trino-ranger-demo
+  postgresql:
+    image: postgres:13
+    container_name: psql01
+    hostname: psql01
+    environment:
+      POSTGRES_PASSWORD: "postgres"
+    ports:
+      - 5432:5432
+    networks:
+      - trino-ranger-demo
+  ranger-admin:
+    image: trino-ranger-demo:v2.1.0
+    container_name: ranger-admin
+    hostname: ranger-admin
+    entrypoint: bash -c "cd /root/ranger-2.1.0-admin/ && ./setup.sh && ranger-admin start && tail -f /root/ranger-2.1.0-admin/ews/logs/ranger-admin-*-.log "
+    deploy:
+     resources:
+       limits:
+         cpus: '2'
+         memory: 6G
+       reservations:
+         cpus: '1'
+         memory: 5G
+    ports:
+      - 6080:6080
+    networks:
+      - trino-ranger-demo
+    volumes:
+      - ./ranger-admin/install.properties:/root/ranger-2.1.0-admin/install.properties
+  trino:
+    image: trinodb/trino:362
+    hostname: my-localhost-trino
+    user: root
+    container_name: my-localhost-trino
+    entrypoint: bash -c " cd /root && curl https://github.com/aakashnand/trino-ranger-demo/releases/download/trino-ranger-demo-v2.1.0/ranger-2.1.0-trino-plugin.tar.gz --output ranger-2.1.0-trino-plugin.tar.gz -L  && tar xvf ranger-2.1.0-trino-plugin.tar.gz && yes| cp /home/trino/ranger-2.1.0-trino-plugin/* ranger-2.1.0-trino-plugin/ && chown root:root -R /root/ranger-2.1.0-trino-plugin/* && /root/ranger-2.1.0-trino-plugin/enable-trino-plugin.sh && /usr/lib/trino/bin/run-trino "
+    networks:
+      - trino-ranger-demo
+    volumes:
+      - ./trino/enable-trino-plugin.sh:/home/trino/ranger-2.1.0-trino-plugin/enable-trino-plugin.sh
+      - ./trino/install.properties:/home/trino/ranger-2.1.0-trino-plugin/install.properties
+    ports:
+      - 8080:8080
+networks:
+  trino-ranger-demo:
+    driver: bridge
