@@ -11,6 +11,8 @@ services:
       - 9200:9200
     networks:
       - trino-ranger-demo
+    volumes:
+    - ranger-es-data:/usr/share/elasticsearch/data
   postgresql:
     image: postgres:13
     container_name: psql01
@@ -21,19 +23,21 @@ services:
       - 5432:5432
     networks:
       - trino-ranger-demo
+    volumes:
+    - ranger-pg-data:/var/lib/postgresql/data
   ranger-admin:
     image: trino-ranger-demo:v2.1.0
     container_name: ranger-admin
     hostname: ranger-admin
     entrypoint: bash -c "cd /root/ranger-2.1.0-admin/ && ./setup.sh && ranger-admin start && tail -f /root/ranger-2.1.0-admin/ews/logs/ranger-admin-*-.log "
     deploy:
-     resources:
-       limits:
-         cpus: '2'
-         memory: 6G
-       reservations:
-         cpus: '1'
-         memory: 5G
+      resources:
+        limits:
+          cpus: '2'
+          memory: 6G
+        reservations:
+          cpus: '1'
+          memory: 5G
     ports:
       - 6080:6080
     networks:
@@ -45,7 +49,7 @@ services:
     hostname: my-localhost-trino
     user: root
     container_name: my-localhost-trino
-    entrypoint: bash -c " cd /root && curl https://github.com/aakashnand/trino-ranger-demo/releases/download/trino-ranger-demo-v2.1.0/ranger-2.1.0-trino-plugin.tar.gz --output ranger-2.1.0-trino-plugin.tar.gz -L  && tar xvf ranger-2.1.0-trino-plugin.tar.gz && yes| cp /home/trino/ranger-2.1.0-trino-plugin/* ranger-2.1.0-trino-plugin/ && chown root:root -R /root/ranger-2.1.0-trino-plugin/* && /root/ranger-2.1.0-trino-plugin/enable-trino-plugin.sh && /usr/lib/trino/bin/run-trino "
+    entrypoint: bash -c " cd /root && curl https://github.com/aakashnand/trino-ranger-demo/releases/download/trino-ranger-demo-v1.0/ranger-2.1.0-trino-plugin.tar.gz --output ranger-2.1.0-trino-plugin.tar.gz -L  && tar xvf ranger-2.1.0-trino-plugin.tar.gz && yes| cp /home/trino/ranger-2.1.0-trino-plugin/* ranger-2.1.0-trino-plugin/ && chown root:root -R /root/ranger-2.1.0-trino-plugin/* && /root/ranger-2.1.0-trino-plugin/enable-trino-plugin.sh && /usr/lib/trino/bin/run-trino "
     networks:
       - trino-ranger-demo
     volumes:
@@ -56,3 +60,6 @@ services:
 networks:
   trino-ranger-demo:
     driver: bridge
+volumes:
+  ranger-es-data:
+  ranger-pg-data:
