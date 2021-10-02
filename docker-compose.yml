@@ -6,7 +6,7 @@ services:
     hostname: es01
     environment:
       discovery.type: single-node
-      xpack.security.enabled: false
+      xpack.security.enabled: "false"
     ports:
       - 9200:9200
     networks:
@@ -26,7 +26,7 @@ services:
     volumes:
     - ranger-pg-data:/var/lib/postgresql/data
   ranger-admin:
-    image: trino-ranger-demo:v2.1.0
+    image: aakashnand/trino-ranger-demo:v1.0
     container_name: ranger-admin
     hostname: ranger-admin
     entrypoint: bash -c "cd /root/ranger-2.1.0-admin/ && ./setup.sh && ranger-admin start && tail -f /root/ranger-2.1.0-admin/ews/logs/ranger-admin-*-.log "
