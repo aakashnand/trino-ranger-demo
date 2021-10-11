@@ -26,10 +26,10 @@ services:
     volumes:
     - ranger-pg-data:/var/lib/postgresql/data
   ranger-admin:
-    image: aakashnand/trino-ranger-demo:v1.0
+    image: aakashnand/trino-ranger-demo:v2.0
     container_name: ranger-admin
     hostname: ranger-admin
-    entrypoint: bash -c "cd /root/ranger-2.1.0-admin/ && ./setup.sh && ranger-admin start && tail -f /root/ranger-2.1.0-admin/ews/logs/ranger-admin-*-.log "
+    entrypoint: /root/docker-entrypoint.sh
     deploy:
       resources:
         limits:
@@ -43,18 +43,20 @@ services:
     networks:
       - trino-ranger-demo
     volumes:
-      - ./ranger-admin/install.properties:/root/ranger-2.1.0-admin/install.properties
+      - ./ranger-admin/install.properties:/root/install.properties
+      - ./ranger-admin/docker-entrypoint.sh:/root/docker-entrypoint.sh
   trino:
     image: trinodb/trino:362
     hostname: my-localhost-trino
     user: root
     container_name: my-localhost-trino
-    entrypoint: bash -c " cd /root && curl https://github.com/aakashnand/trino-ranger-demo/releases/download/trino-ranger-demo-v1.0/ranger-2.1.0-trino-plugin.tar.gz --output ranger-2.1.0-trino-plugin.tar.gz -L  && tar xvf ranger-2.1.0-trino-plugin.tar.gz && yes| cp /home/trino/ranger-2.1.0-trino-plugin/* ranger-2.1.0-trino-plugin/ && chown root:root -R /root/ranger-2.1.0-trino-plugin/* && /root/ranger-2.1.0-trino-plugin/enable-trino-plugin.sh && /usr/lib/trino/bin/run-trino "
+    entrypoint: /root/docker-entrypoint.sh
     networks:
       - trino-ranger-demo
     volumes:
-      - ./trino/enable-trino-plugin.sh:/home/trino/ranger-2.1.0-trino-plugin/enable-trino-plugin.sh
-      - ./trino/install.properties:/home/trino/ranger-2.1.0-trino-plugin/install.properties
+      - ./trino/enable-trino-plugin.sh:/root/enable-trino-plugin.sh
+      - ./trino/install.properties:/root/install.properties
+      - ./trino/docker-entrypoint.sh:/root/docker-entrypoint.sh
     ports:
       - 8080:8080
 networks:
