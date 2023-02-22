@@ -26,7 +26,7 @@ services:
     volumes:
     - ranger-pg-data:/var/lib/postgresql/data
   ranger-admin:
-    image: trino-ranger-demo:v3.0
+    image: aakashnand/trino-ranger-demo:v3.0
     container_name: ranger-admin
     hostname: ranger-admin
     entrypoint: /root/docker-entrypoint.sh
@@ -46,7 +46,7 @@ services:
       - ./ranger-admin/install.properties:/root/install.properties
       - ./ranger-admin/docker-entrypoint.sh:/root/docker-entrypoint.sh
   trino:
-    image: trinodb/trino:384
+    image: trinodb/trino:406
     hostname: my-localhost-trino
     user: root
     container_name: my-localhost-trino
