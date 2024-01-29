@@ -29,4 +29,4 @@ jobs:
         with:
           context: ./ranger-admin/
           push: true
-          tags: aakashnand/trino-ranger-demo:v3.0
+          tags: aakashnand/trino-ranger-demo:v4.0
