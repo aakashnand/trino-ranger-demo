@@ -1,3 +1,6 @@
+> [!CAUTION]
+Thank you for visiting this repository. There have been significant progress in Trino Ranger plugin integration since I worked on this repository. Now that Ranger System Access Control is natively available in Trino. I have no plan to maintain this repository. Please refer to official documentation for latest updates on Trino Ranger plugin integration. https://trino.io/docs/current/security/ranger-access-control.html
+
 # trino-ranger-demo
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/aakashnand/trino-ranger-demo/build-push-docker-image.yml) ![Docker Pulls](https://img.shields.io/docker/pulls/aakashnand/trino-ranger-demo)
 ![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/aakashnand/trino-ranger-demo/v3.0)
